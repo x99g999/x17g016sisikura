@@ -1,0 +1,112 @@
+/**/
+body{
+    background-image: url("../img/sky001.jpg");
+    height: 100%;
+    widows: 100%;
+    }
+    #apori{
+    color: red;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    #head{
+    text-align: center;
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    
+    #nichiji{
+    font-size: 130%;
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    
+    #nowWt{
+    text-align: center;
+    font-size: 30px;
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    
+    }
+    
+    #nowTemp{
+    font-size: 450%;
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    margin-bottom:  0;
+    }
+    
+    #afterWt{
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    
+    #skyTxt{
+      margin: 0;
+    }
+    
+    #location{
+      margin: 0;
+    }
+    
+    /*tableタグの中身*/
+    table{
+    background-color: rgba(34, 12, 224, 0.3);
+    width: 100%;
+    }
+    td{
+    font-size: 25px;
+    text-align: center;
+    }
+    td img{
+    height: 60%;
+    }
+    
+    
+    #high{
+    color: red;
+    }
+    
+    #low{
+    color: blue;
+    }
+    
+    #report{
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    font-size: 18px;
+    }
+    
+    .heading{
+    font-size: 20px;
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    
+    #detail{
+    text-align: center;
+    font-size: 30px;
+    background-color: rgba(34, 12, 224, 0.3);
+    color: #f0f8ff;
+    text-shadow:1px -1px 0 #000,
+    1px -1px 0 #000;
+    }
+    
+    #report{
+    height: 120px;
+    background-color: rgba(34, 12, 224, 0.3);
+    }
+    /*売れ行き校長の画像*/
+    #icon{
+    width: 120px;
+    height: 120px;
+    float: left;
+    margin: 0;
+    }

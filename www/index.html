@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: content: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery.bxslider.css">
+    
+    <!-- Monacaで実施する場合は記述不要(設定で登録) 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    -->
+    <!-- MSNの場合は不要（サイト側で処理）
+       <script src="js/jquery.xdomainajax2.js" ></script>
+    -->
+    <script src="js/jquery.bxslider.js"></script>
+    <script>
+        //ロード完了時
+        $(document).ready(function () {
+            //ちなみに「wc:JAXX0011」は、千葉の船橋です
+            var wcode = "wc:JAXX0011";
+            var url = "http://weather.service.msn.com/data.aspx?src=vista&weadegreetype=C&culture=ja-JP&wealocations="
+            var weatherURL = url + wcode;//URL指定
+            //http://weather.service.msn.com/data.aspx?src=vista&weadegreetype=C&culture=ja-JP&wealocations=wc:JAXX0011
+
+            //今日の日付を表示する
+            var date = new Date();
+            var today = date.getFullYear() + "年" + (date.getMonth() + 1) + "月" + date.getDate() + "日";
+            //曜日取得
+            var dayOfWeek = date.getDay() ;
+            var dayOfWeekStr = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeek] ;
+            var beforeWeekStr = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeek - 1] ;
+            //jQueryを使わない書き方
+            document.getElementById("nichiji").innerHTML += today + "（"　+dayOfWeekStr + "）";
+            var hour = date.getHours(); //時間取得
+            changeBg(hour);            
+            console.log(weatherURL);
+
+            $.ajax({
+                url: weatherURL,
+                type: 'GET',      //外部サイトにGET送信
+                cache: false,     //キャッシュOF
+
+                //データのロード完了時
+                success: function (res, status) {
+                    console.dir(arguments);
+                    console.log("---1---");
+
+                    //取得した内容(テキスト)をコンソールに出力
+                    var wd = $(res).find('weatherdata');
+                    console.log(wd.html());
+
+                    //今回必要なのはこの部分           
+                    var wt = $(res).find('weather');
+                    console.log(wt.html());
+
+                    $("#location").text("船橋市");
+
+                    //<current>の属性を取得 
+                    var skycode = $(wt).find('current').attr('skycode');
+                    var skytext = $(wt).find('current').attr('skytext');
+                    var temperature = $(wt).find('current').attr('temperature');    //気温
+                    var picUrl = "Pic/" + skycode + ".png";
+                    koutyou(temperature);
+
+                    //お天気データに追記、画像表示
+                    $("#tenkipic").attr("src", picUrl);
+                    $("#skyTxt").text(skytext);
+                    $("#nowTemp").text(temperature + "℃");
+
+
+                    //週間天気予報の取得                            
+                    //<weather>の下の<forecast>（複数）の１件ずつ処理
+                    //$(res).find('weather').find('forecast').each(function(i){
+                    //上でも動作するが下記の方が見やすい
+                    $(wt).find('forecast').each(function (i) {
+                        //alert(i);
+                        var day = $(this).attr('day');
+                        var skycodeday = $(this).attr('skycodeday');    //曜日
+                        var low = $(this).attr('low');
+                        var high = $(this).attr('high');
+                        picUrl = "Pic/" + skycodeday + ".png";
+                        //MSNの更新が終わっていない際のエラー処理
+                        if (day !== beforeWeekStr) {
+                            $("#list").append("<tr id='tb" + i + "'>" + "</tr>");
+                            $("#tb" + i).append("<td width='30%'>" + day + "</td>" +
+                                "<td>" + "<img src ='" + picUrl + "' alt='週間天気'>" + "</td>" +
+                                "<td>" + "<span id='high'>" + high + "℃" + "</span>" + "/" + "<span id = 'low'>" + low + "℃" + "</span>" + "</td>");
+                        }
+
+                    });
+                    //詳細情報関連取得
+                    var humidity = $(wt).find('current').attr('humidity');  //湿度
+                    var feelslike = $(wt).find('current').attr('feelslike');  //体感温度
+                    var winddisplay = $(wt).find('current').attr('winddisplay');  //風向き+風速
+
+                    $("#situdo").text(humidity + "%");
+                    $("#taikan").text(feelslike + "℃");
+                    $("#wind").text(winddisplay);
+
+                    //取得した生データ表示
+                    console.log(wd.html());
+                },
+
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+                    console.log(" textStatus : " + textStatus);
+                    console.log(" errorThrown : " + errorThrown.message);
+                }
+            });
+
+            //スライドショー
+             $('.slider').bxSlider( );
+        });
+        
+    </script>
+
+    <style>
+    </style>
+</head>
+
+<body>
+    <h3 id="apori">天気予報アプリ</h3>
+    <div id="head">
+        <h1 id="location"></h1>
+        <div id="nichiji">今日の日付:</div>
+    </div>
+    <div id="nowWt">
+        <h1 id="nowTemp">気温</h1>
+        <h4 id="skyTxt">現在天気</h4>
+        <img id="tenkipic" src="" alt="現在天気">
+    </div>
+    <hr>
+    <div id="afterWt">
+        <h1 id="weekWt">今週の天気</h1>
+        <table border="0" id="list">
+        </table>
+    </div>
+    <hr>
+    <b class="heading">売れ行き校長のありがたいお言葉</b>
+    <div id="report">
+        <p id="koutyou">
+            <img src="img/ureiki.png" id="icon">
+        </p>
+    </div>
+    <hr>
+    <b class="heading">詳細情報</b>
+    <div id="detail">
+        <h4>湿度
+            <span id="situdo">null</span>
+        </h4>
+        <h4>体感温度
+            <span id="taikan">null</span>
+        </h4>
+        <h4>風
+            <span id="wind"></span>
+        </h4>
+    </div>
+    <script>
+        //背景画像変更
+        function changeBg(time) {
+            if (time >= 6 && time < 16) {
+                document.body.style.backgroundImage = "url(img/sky001.jpg)";
+            } else if (time >= 16 && time < 19) {
+                document.body.style.backgroundImage = "url(img/sky002.jpg)";
+            } else {
+                document.body.style.backgroundImage = "url(img/sky003.jpg)";
+            }
+        }
+
+        //売れ行き校長からのありがたいお言葉
+        function koutyou(temp) {
+            if (temp >= 30) {
+                $('#koutyou').append("暑そう");
+            } else if (temp >= 25) {
+                $('#koutyou').append("まあまあ暑そう");
+            } else if (temp >= 18) {
+                $('#koutyou').append("過ごしやすそう");
+            } else if (temp >= 10) {
+                $('#koutyou').append("肌寒そう");
+            } else if (temp >= 5) {
+                $('#koutyou').append("寒そう");
+            } else {
+                $('#koutyou').append("凍りそう");
+            }
+        }
+    </script>
+</body>
+</html>
